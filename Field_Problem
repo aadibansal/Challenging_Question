@@ -1,0 +1,71 @@
+static long power(long x, int y)
+{
+    int p = 1000000007;
+    long res = 1;      
+ 
+    while (y > 0)
+    {
+        System.out.println(x);
+        // If y is odd, multiply x with result
+        if ((y & 1) !=0)
+            res = (res*x) % p;
+ 
+        // y must be even now
+        y = y>>1; // y = y/2
+        x = (x*x) % p;  
+    }
+    System.out.println(x+ "   "+res);
+    return res;
+}
+
+    /*
+     * Complete the function below.
+     */
+    
+    static boolean isSafe(char M[][], int row, int col, boolean visited[][])
+    {   int ROW = M.length;
+     int COL  = M[0].length;
+        return (row >= 0) && (row < ROW) &&     
+               (col >= 0) && (col < COL) &&      
+               M[row][col]!='N' && !visited[row][col]; 
+    }
+
+    static void DFS(char M[][], int i , int j, boolean visited[][]){
+         int rowNbr[] = new int[] {-1,  0, 0, 1};
+        int colNbr[] = new int[] { 0, -1, 1, 0};
+        
+        visited[i][j] = true;
+        for (int k = 0; k < 4; ++k){
+             if (isSafe(M, i + rowNbr[k], j + colNbr[k], visited) )
+                DFS(M, i + rowNbr[k], j + colNbr[k], visited);
+        }
+    }
+    static int countField(String[] grid){
+        int row = grid.length;
+        int col = grid[0].length();
+        char M[][] = new char[row][col];
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                M[i][j] = grid[i].charAt(j);
+            }   
+        }
+        
+        boolean visited[][] = new boolean[row][col];
+        int count = 0;
+         for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(M[i][j]=='Y' && !visited[i][j]){
+                   DFS(M, i, j, visited);
+                    count=(count%1000000007)+1;
+                }
+            }   
+        }
+        return count;
+    }
+    static int Group(String[] grid) {
+        int field = countField(grid);
+        if(field>=1)
+        return (int)power(2, field-1);
+        else 
+            return 1;
+    }
