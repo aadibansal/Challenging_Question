@@ -1,0 +1,96 @@
+public static boolean isValid(int possibleX,int possibleY,int[][] arr){
+        return(possibleX < arr.length && possibleX >=0 && possibleY < arr[0].length && possibleY >=0 );
+    }
+
+  static class Point{
+        int x;
+        int y;
+        public Point(int x,int y){
+            this.x=x;
+            this.y=y;
+        }
+    }
+
+    	public static int findMinimumPath(int[][] arr,int x,int y,int startX,int startY){
+            ArrayList<Point> arrList = new ArrayList<>();
+			for(int i=0; i < arr.length;i++){
+				for(int j=0; j < arr.length;j++){
+					if(arr[i][j]==2){
+						arrList.add(new Point(i,j));
+					}	
+				}
+			}
+            
+            int minimumDistance=Integer.MAX_VALUE;
+            
+            int newStartX=0;
+			int newStartY=0;
+            int id=-1;
+            int steps=0, dist=0;
+            while(arrList.size()!=0){
+                	minimumDistance=Integer.MAX_VALUE;
+                for(int i=0; i < arrList.size();i++){
+					Point p = arrList.get(i);
+                    dist = findMinimumDistance(new Point(startX,startY),new Point(p.x,p.y),arr);
+                    if(dist == -1) return -1;
+                    if(dist<minimumDistance){
+                        newStartX=p.x;
+						newStartY=p.y;
+                        minimumDistance = dist;
+                        id=i;
+                    }
+                }
+                steps+=minimumDistance;
+                arrList.remove(id);
+                startX=newStartX;
+				startY=newStartY;
+            }
+           dist = findMinimumDistance(new Point(startX,startY),new Point(x,y),arr);
+            if(dist==-1) return -1;
+            else return steps+=dist;
+        }
+
+static class QueueNode{
+
+	Point point;
+	int distance;
+
+	public QueueNode(Point point,int distance){
+		this.point = point;
+		this.distance=distance;
+	}
+}
+
+public static int findMinimumDistance(Point source,Point destination,int[][] arr){
+     int[] possibleRow = {0,-1,0,1};
+		    int[] possibleColumn = {-1,0,1,0};
+    Queue<QueueNode> queue = new LinkedList<>();
+		    queue.add(new QueueNode(source,0));	
+    	    boolean[][] visited = new boolean[arr.length][arr.length];
+     visited[source.x][source.y]=true;
+
+		    while(!queue.isEmpty()){
+                QueueNode node = queue.poll();
+		    	Point currentPoint = node.point;
+                if(currentPoint.x==destination.x && currentPoint.y==destination.y){
+		    		return node.distance;
+		    	}else{
+                    for(int i=0; i < possibleRow.length;i++){
+		    			int possibleX = currentPoint.x + possibleRow[i];
+		    			int possibleY = currentPoint.y + possibleColumn[i];
+                        if(isValid(possibleX,possibleY,arr) && !visited[possibleX][possibleY] && arr[possibleX][possibleY]!=1){
+
+		    				visited[possibleX][possibleY]=true;
+		    				queue.add(new QueueNode(new Point(possibleX,possibleY),node.distance+1));
+		    			}
+                    }
+                }
+            }
+     return -1;
+}
+    /*
+     * Complete the function below.
+     */
+    static int minMoves(int[][] maze, int x, int y) {
+       return findMinimumPath(maze, x, y, 0, 0);
+    }
