@@ -1,0 +1,64 @@
+static class MinHeapNode{
+    String data;
+    MinHeapNode left,right;
+    MinHeapNode(String data){
+        this.left=null;
+        this.right=null;
+        this.data = data;
+    }
+}
+
+ static void insert(String str, MinHeapNode rot){
+     MinHeapNode root = rot;
+        String[]splt = str.split("\\s+");
+        int length=splt[1].length();
+        int index=0;
+        while(index<length-1){
+            if(splt[1].charAt(index)=='1'){
+                if(root.right==null){
+                    root.right = new MinHeapNode("0"); 
+                }
+                root = root.right;
+            }else{
+                if(root.left==null){
+                    root.left = new MinHeapNode("0"); 
+                }
+                  root = root.left;
+            }
+            index++;
+        }
+        if(splt[1].charAt(index)=='1'){
+            root.right = new MinHeapNode(splt[0]);
+        }else{
+            root.left = new MinHeapNode(splt[0]);
+        }
+    }
+
+static String decode(String[] codes, String encoded) {
+    MinHeapNode root = new MinHeapNode("0");
+    int length = codes.length;
+    for(int i=0;i<length;i++){
+        insert(codes[i],root);
+    }
+    length = encoded.length();
+    int index=0;
+   String ans="";
+    
+     MinHeapNode root1 = root;
+    while(index<length){
+        if(encoded.charAt(index)=='1'){
+            root1=root1.right;
+        }else{
+            root1=root1.left;
+        }
+        if(root1.left==null && root1.right==null){
+            if(root1.data.equals("[newline]")){
+                ans+="\n";
+            }else
+                 ans+=root1.data;
+            root1=root;
+        }
+        index++;
+    }
+    return ans;
+    }
